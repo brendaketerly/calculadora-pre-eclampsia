@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)file:///C:/Users/USU%C3%81RIO/Downloads/preview%20(3).html -->
+<html lang="pt-br"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>PreEclamp Risk APS</title>
+
+<style>
+body { font-family: Arial; padding: 20px; }
+h2 { color: #333; }
+
+.pergunta {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.erro {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+.result {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.alto { color: red; }
+.baixo { color: green; }
+
+.alerta {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Estratificação de Risco para Pré-eclâmpsia</h2>
+
+<h3>Fatores de Alto Risco</h3>
+
+<div class="pergunta" data-name="alto1">
+Pré-eclâmpsia anterior <br>
+<label><input type="radio" name="alto1" value="sim"> Sim</label>
+<label><input type="radio" name="alto1" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="alto2">
+Hipertensão crônica <br>
+<label><input type="radio" name="alto2" value="sim"> Sim</label>
+<label><input type="radio" name="alto2" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="alto3">
+Diabetes pré-gestacional <br>
+<label><input type="radio" name="alto3" value="sim"> Sim</label>
+<label><input type="radio" name="alto3" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="alto4">
+Doença renal <br>
+<label><input type="radio" name="alto4" value="sim"> Sim</label>
+<label><input type="radio" name="alto4" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="alto5">
+Doença autoimune <br>
+<label><input type="radio" name="alto5" value="sim"> Sim</label>
+<label><input type="radio" name="alto5" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="alto6">
+Gestação múltipla <br>
+<label><input type="radio" name="alto6" value="sim"> Sim</label>
+<label><input type="radio" name="alto6" value="nao"> Não</label>
+</div>
+
+<h3>Fatores Moderados</h3>
+
+<div class="pergunta" data-name="mod1">
+Primigesta <br>
+<label><input type="radio" name="mod1" value="sim"> Sim</label>
+<label><input type="radio" name="mod1" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="mod2">
+Idade ≥ 35 anos <br>
+<label><input type="radio" name="mod2" value="sim"> Sim</label>
+<label><input type="radio" name="mod2" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="mod3">
+IMC ≥ 30 <br>
+<label><input type="radio" name="mod3" value="sim"> Sim</label>
+<label><input type="radio" name="mod3" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="mod4">
+História familiar <br>
+<label><input type="radio" name="mod4" value="sim"> Sim</label>
+<label><input type="radio" name="mod4" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="mod5">
+Intervalo &gt; 10 anos <br>
+<label><input type="radio" name="mod5" value="sim"> Sim</label>
+<label><input type="radio" name="mod5" value="nao"> Não</label>
+</div>
+
+<div class="pergunta" data-name="mod6">
+Vulnerabilidade social <br>
+<label><input type="radio" name="mod6" value="sim"> Sim</label>
+<label><input type="radio" name="mod6" value="nao"> Não</label>
+</div>
+
+<button onclick="calcular()">Calcular Risco</button>
+
+<div id="alerta" class="alerta"></div>
+<div id="resultado" class="result"></div>
+
+<script>
+function validarRespostas() {
+    let valido = true;
+    let perguntas = document.querySelectorAll('.pergunta');
+
+    perguntas.forEach(p => {
+        let nome = p.getAttribute("data-name");
+        let marcado = document.querySelector(`input[name="${nome}"]:checked`);
+
+        if (!marcado) {
+            p.classList.add("erro");
+            valido = false;
+        } else {
+            p.classList.remove("erro");
+        }
+    });
+
+    return valido;
+}
+
+function contar(prefixo, total) {
+    let count = 0;
+    for (let i = 1; i <= total; i++) {
+        let selecionado = document.querySelector(`input[name="${prefixo}${i}"]:checked`);
+        if (selecionado && selecionado.value === "sim") {
+            count++;
+        }
+    }
+    return count;
+}
+
+function calcular() {
+    let alerta = document.getElementById("alerta");
+    let resultado = document.getElementById("resultado");
+
+    if (!validarRespostas()) {
+        alerta.innerHTML = "⚠️ Preencha TODAS as variáveis (Sim ou Não).";
+        resultado.innerHTML = "";
+        return;
+    }
+
+    alerta.innerHTML = "";
+
+    let alto = contar("alto", 6);
+    let moderado = contar("mod", 6);
+
+    if (alto >= 1) {
+        resultado.innerHTML = "⚠️ ALTO RISCO";
+        resultado.className = "result alto";
+    } else if (moderado >= 2) {
+        resultado.innerHTML = "⚠️ ALTO RISCO";
+        resultado.className = "result alto";
+    } else {
+        resultado.innerHTML = "✅ RISCO HABITUAL";
+        resultado.className = "result baixo";
+    }
+}
+</script>
+
+
+</body></html>
